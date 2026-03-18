@@ -31,6 +31,8 @@ try
 catch ME
     error('参考真值文件加载失败: %s', ME.message);
 end
+rho = 1.0;
+max_admm_iter = 20;
 
 %% Adding mixing noise
 %%f = f / 255;
@@ -195,7 +197,9 @@ for iter=1:max_iter
     end
 end
 
+U = admm_optimization(U, distants, m, lambda, L, max_admm_iter, rho);
 
+U_m = U.^m;
 
 
 
