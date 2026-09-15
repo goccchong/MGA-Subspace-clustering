@@ -1,7 +1,6 @@
 # MGA-Subspace-clustering
 none
 
-下面是根据论文首页及摘要整理的 `README.md` 初稿。由于目前仅能读取到论文首页，训练命令、数据集名称和具体实验结果暂以占位符表示。
 
 ```markdown
 # Multi-Granularity Anchor Embedded Discriminative Latent Low-Rank Fuzzy Representation Clustering
