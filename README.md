@@ -1,6 +1,4 @@
 # MGA-Subspace-clustering
-none
-
 
 ```markdown
 # Multi-Granularity Anchor Embedded Discriminative Latent Low-Rank Fuzzy Representation Clustering
