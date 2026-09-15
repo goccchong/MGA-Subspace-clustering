@@ -200,10 +200,3 @@ Please refer to the `LICENSE` file for the license of this repository.
 
 The code and datasets should be used in accordance with their respective licenses.
 
-## Contact
-
-For questions or discussions, please open an issue or contact the corresponding author:
-
-- Weny Zeng
-- Email: zengwy@bnu.edu.cn
-```
