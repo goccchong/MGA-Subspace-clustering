@@ -1,173 +1,241 @@
-# MGA-Subspace-clustering
-
 ```markdown
 # Multi-Granularity Anchor Embedded Discriminative Latent Low-Rank Fuzzy Representation Clustering
 
-Official implementation of:
+This repository provides the MATLAB implementation of:
 
 > **Multi-granularity anchor embedded discriminative latent low-rank fuzzy representation clustering for color image segmentation**
 
-This repository provides the implementation of **MADE-LFRC**, an unsupervised image segmentation method based on multi-granularity anchors, discriminative latent low-rank representation, and fuzzy clustering.
+The proposed method is designed for unsupervised color image segmentation by integrating multi-granularity anchors, discriminative latent low-rank representation, fuzzy clustering, and graph-based spatial information.
+
+---
 
 ## Overview
 
-Low-rank representation-based subspace clustering is effective for image segmentation because it can model high-dimensional data using multiple low-dimensional subspaces. However, existing methods may suffer from:
+Existing low-rank representation-based clustering methods may suffer from excessive singular-value shrinkage, loss of discriminative information, and over-smoothed segmentation boundaries.
 
-- Excessive shrinkage of singular values;
-- Loss of intra-class variation;
-- Oversmoothing of image regions;
-- Insufficient preservation of local details;
-- Boundary blurring caused by single-granularity anchor representations.
+To address these issues, this work introduces a multi-granularity anchor embedded fuzzy representation clustering framework with the following components:
 
-To address these limitations, we propose **Multi-granularity Anchor embedded Discriminative Latent low-rank Fuzzy Representation Clustering (MADE-LFRC)**.
+- **Multi-granularity anchor construction** for representing image data at different scales;
+- **Anchor-based similarity learning** to reduce computational cost;
+- **Discriminative latent low-rank representation** for modeling the underlying subspace structure;
+- **Hyperbolic tangent rank regularization** to alleviate excessive singular-value shrinkage;
+- **Fuzzy normalization** for obtaining soft cluster assignments;
+- **Local and non-local image information** for preserving spatial structures and segmentation details.
 
-<p align="center">
-  <img src="figures/framework.png" width="850">
-</p>
+The final segmentation result is obtained from the learned fuzzy membership matrix.
 
-## Key Features
+---
 
-- **Discriminative latent low-rank representation**  
-  Models latent subspace structures while preserving more discriminative image information.
+## Method Pipeline
 
-- **Hyperbolic tangent rank regularization**  
-  Reduces the excessive shrinkage of dominant singular values and suppresses minor singular values.
-
-- **Multi-granularity anchor strategy**  
-  Combines anchors from different scales to capture both global structures and local details.
-
-- **Graph-Laplacian regularization**  
-  Preserves the spatial and neighborhood relationships among image samples.
-
-- **Fuzzy normalization**  
-  Integrates multi-scale affinity matrices into a coherent fuzzy partition.
-
-- **Unsupervised image segmentation**  
-  No initial cluster-center selection or manual pixel-level annotation is required.
-
-## Method
-
-The proposed method jointly optimizes a multi-granularity low-rank representation and fuzzy membership matrix:
-
-\[
-\min_{\mathbf{Z},\mathbf{U},\ldots}
-\mathcal{L}(\mathbf{Z},\mathbf{U},\ldots),
-\]
-
-where:
-
-- \(\mathbf{Z}\) denotes the latent low-rank representation;
-- \(\mathbf{U}\) denotes the fuzzy membership matrix;
-- Multi-scale anchor matrices are used to reduce computational complexity;
-- Hyperbolic tangent rank regularization preserves dominant singular values;
-- Graph-Laplacian regularization maintains local spatial structures.
-
-The final segmentation map is obtained from the learned fuzzy membership matrix.
-
-## Installation
-
-```bash
-git clone https://github.com/gocchong/MGA-Subspace-clustering.git
-cd MGA-Subspace-clustering
-
-# Create a virtual environment
-conda create -n made-lfrc python=3.9
-conda activate made-lfrc
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-## Requirements
-
-The implementation requires:
-
-- Python 3.9+
-- NumPy
-- SciPy
-- scikit-image
-- scikit-learn
-- OpenCV
-- Matplotlib
-
-The complete dependency list is provided in `requirements.txt`.
-
-## Dataset Preparation
-
-Place the datasets in the following directory:
+The general processing pipeline is:
 
 ```text
-data/
-├── natural_images/
-├── remote_sensing_images/
-└── ...
+Input color image
+        │
+        ▼
+Color-space conversion and feature extraction
+        │
+        ▼
+Local / non-local information construction
+        │
+        ▼
+Multi-granularity anchor generation
+        │
+        ▼
+Anchor similarity and adjacency construction
+        │
+        ▼
+Low-rank fuzzy representation optimization
+        │
+        ▼
+Fuzzy membership normalization
+        │
+        ▼
+Cluster-label generation and image segmentation
 ```
 
-The supported datasets include:
-
-- Natural image datasets;
-- Large-scale remote-sensing image datasets.
-
-> Please refer to the dataset descriptions in the paper and follow the corresponding dataset licenses.
-
-## Usage
-
-### Run the default configuration
-
-```bash
-python main.py \
-    --dataset <dataset_name> \
-    --num_clusters <number_of_clusters>
-```
-
-### Specify the input image
-
-```bash
-python main.py \
-    --image_path path/to/image.png \
-    --num_clusters 4 \
-    --num_anchors 100
-```
-
-### Evaluate segmentation results
-
-```bash
-python evaluate.py \
-    --result_dir results/<dataset_name>
-```
-
-> The exact command-line arguments may vary according to the final released implementation.
-
-## Results
-
-MADE-LFRC is evaluated on natural images and large-scale remote-sensing images. Experimental results demonstrate that the proposed method can:
-
-- Preserve richer local image details;
-- Reduce region oversmoothing;
-- Improve segmentation boundary quality;
-- Achieve competitive or superior performance compared with existing subspace clustering methods.
-
-Example results:
-
-<p align="center">
-  <img src="figures/qualitative_results.png" width="850">
-</p>
-
-Quantitative results will be added after the official experimental files are released.
+---
 
 ## Repository Structure
 
 ```text
 .
-├── data/                  # Dataset directory
-├── figures/               # Figures and visualizations
-├── models/                # Model and optimization components
-├── utils/                 # Utility functions
-├── main.py                # Main entry point
-├── evaluate.py            # Evaluation script
-├── requirements.txt       # Python dependencies
-└── README.md
+├── README.md
+├── demo_to_run.m
+├── Label_image.m
+│
+├── adm m_optimization.m
+├── build_anchor_adjacency_func.m
+├── compute_anchor_similarity_func.m
+├── compute_tanh_rank_func.m
+├── fuzzy_normalize_func.m
+├── fuzzy_normalize_gradient_func.m
+├── generate_coarse_anchors_func.m
+├── local_variance.m
+├── non_local_information.m
+└── colorspace.m
 ```
+
+### Main Scripts
+
+| File | Description |
+|---|---|
+| `demo_to_run.m` | Main demonstration script for running the proposed method |
+| `Label_image.m` | Converts the clustering or membership result into an image-label map |
+
+### Core Functions
+
+| File | Description |
+|---|---|
+| `generate_coarse_anchors_func.m` | Generates coarse-grained anchors |
+| `compute_anchor_similarity_func.m` | Computes similarities between image samples and anchors |
+| `build_anchor_adjacency_func.m` | Constructs the anchor adjacency relationship |
+| `compute_tanh_rank_func.m` | Computes the hyperbolic tangent rank regularization |
+| `fuzzy_normalize_func.m` | Performs fuzzy membership normalization |
+| `fuzzy_normalize_gradient_func.m` | Computes the gradient associated with fuzzy normalization |
+| `admm_optimization.m` | Solves the optimization problem using the ADMM framework |
+| `local_variance.m` | Extracts local variance information |
+| `non_local_information.m` | Computes non-local image information |
+| `colorspace.m` | Performs color-space transformation or color feature processing |
+
+---
+
+## Requirements
+
+- MATLAB
+- MATLAB Image Processing Toolbox is recommended
+- Sufficient memory for loading and processing the input image
+
+The code is implemented using MATLAB `.m` files and does not require Python.
+
+---
+
+## Getting Started
+
+Clone or download this repository:
+
+```bash
+git clone https://github.com/gocchong/MGA-Subspace-clustering.git
+cd MGA-Subspace-clustering
+```
+
+Open MATLAB, set the repository directory as the current folder, and run:
+
+```matlab
+demo_to_run
+```
+
+The demo script demonstrates the complete processing procedure, including feature construction, anchor generation, optimization, fuzzy membership estimation, and segmentation-label generation.
+
+---
+
+## Input Data
+
+The demo can be adapted to different color images by modifying the image-loading and parameter settings in:
+
+```matlab
+demo_to_run.m
+```
+
+For example:
+
+```matlab
+img = imread('your_image.jpg');
+```
+
+The input should generally be a color image with three channels. If a different image format or feature representation is used, the corresponding preprocessing section should be adjusted accordingly.
+
+---
+
+## Output
+
+The algorithm produces fuzzy membership maps and segmentation-label results.
+
+Typical output files include:
+
+```text
+Cluster1_Membership.png
+Cluster2_Membership.png
+Cluster3_Membership.png
+cluster_mask.png
+```
+
+The membership maps visualize the degree to which each pixel belongs to a specific cluster. The final label image can be generated using:
+
+```matlab
+Label_image
+```
+
+Example visualization files included in the repository are:
+
+- `Cluster1_Membership.png`
+- `Cluster2_Membership.png`
+- `Cluster3_Membership.png`
+- `cluster_mask.png`
+- `3096.jpg`
+- `h2.jpg`
+- `h5.jpg`
+- `s11.jpg`
+
+---
+
+## Important Parameters
+
+The main algorithmic parameters can be adjusted in `demo_to_run.m`, including:
+
+- Number of clusters;
+- Number and scale of anchors;
+- Fuzzy normalization parameters;
+- Low-rank regularization parameters;
+- ADMM optimization parameters;
+- Stopping tolerance and maximum iteration number.
+
+For different images, the number of clusters and anchor-related parameters may need to be adjusted according to the image content and expected segmentation classes.
+
+---
+
+## Implementation Notes
+
+The optimization procedure is implemented using the alternating direction method of multipliers (ADMM). The main optimization process is contained in:
+
+```matlab
+admm_optimization.m
+```
+
+The method uses multiple anchor scales to balance:
+
+- Global structural information;
+- Local image details;
+- Computational efficiency;
+- Robust fuzzy cluster assignment.
+
+The hyperbolic tangent rank function is implemented in:
+
+```matlab
+compute_tanh_rank_func.m
+```
+
+---
+
+## Reproducibility
+
+To reproduce the demo results:
+
+1. Download or clone this repository;
+2. Open MATLAB and set the repository as the current directory;
+3. Check the image paths and parameters in `demo_to_run.m`;
+4. Run:
+
+```matlab
+demo_to_run
+```
+
+5. Use `Label_image.m` to generate or visualize the final segmentation labels if necessary.
+
+Because the optimization result may depend on image size, parameter settings, and initialization, the results may exhibit minor differences across MATLAB versions or computational environments.
+
+---
 
 ## Citation
 
@@ -186,15 +254,19 @@ If you find this code or paper useful, please cite:
 }
 ```
 
-## Paper
-
-- **Journal:** Information Sciences
-- **DOI:** [10.1016/j.ins.2026.124029](https://doi.org/10.1016/j.ins.2026.124029)
-- **Code:** [https://github.com/gocchong/MGA-Subspace-clustering](https://github.com/gocchong/MGA-Subspace-clustering)
+---
 
 ## License
 
-Please refer to the `LICENSE` file for the license of this repository.
+Please refer to the license information provided in this repository.
 
-The code and datasets should be used in accordance with their respective licenses.
+The code and example images should be used in accordance with their respective licenses.
 
+---
+
+## Contact
+
+For questions or suggestions, please open an issue in this repository or contact the authors.
+
+- **Repository:** [https://github.com/gocchong/MGA-Subspace-clustering](https://github.com/gocchong/MGA-Subspace-clustering)
+```
